@@ -52,35 +52,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
+    console.log("🔄 회원가입 요청 시작:", req.body);
+    
     if (!process.env.DATABASE_URL) {
       throw new Error('DATABASE_URL 환경변수가 설정되지 않았습니다');
     }
 
     // Validate input data
+    console.log("📝 입력 데이터 검증 중...");
     const userData = insertUserSchema.parse(req.body);
+    console.log("✅ 입력 데이터 검증 완료:", { studentId: userData.studentId, username: userData.username });
     
     // Setup database connection
+    console.log("🔗 데이터베이스 연결 중...");
     const sql = postgres(process.env.DATABASE_URL);
     const db = drizzle(sql);
+    console.log("✅ 데이터베이스 연결 완료");
     
     // Check if username already exists
+    console.log("👤 사용자명 중복 확인 중:", userData.username);
     const existingUsers = await db.select().from(users).where(eq(users.username, userData.username));
     if (existingUsers.length > 0) {
+      console.log("❌ 사용자명 중복:", userData.username);
       await sql.end();
       return res.status(400).json({ message: "이미 사용 중인 사용자명입니다" });
     }
+    console.log("✅ 사용자명 사용 가능");
 
     // Check if student ID already exists
+    console.log("🎓 학번 중복 확인 중:", userData.studentId);
     const existingStudents = await db.select().from(users).where(eq(users.studentId, userData.studentId));
     if (existingStudents.length > 0) {
+      console.log("❌ 학번 중복:", userData.studentId);
       await sql.end();
       return res.status(400).json({ message: "이미 등록된 학번입니다" });
     }
+    console.log("✅ 학번 사용 가능");
 
     // Hash password
+    console.log("🔐 비밀번호 해싱 중...");
     const hashedPassword = await bcrypt.hash(userData.password, 10);
+    console.log("✅ 비밀번호 해싱 완료");
 
     // Create user
+    console.log("👤 사용자 생성 중...");
     const newUsers = await db.insert(users).values({
       studentId: userData.studentId,
       username: userData.username,
@@ -88,26 +103,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }).returning();
 
     if (newUsers.length === 0) {
+      console.log("❌ 사용자 생성 실패");
       await sql.end();
       return res.status(500).json({ message: "사용자 생성에 실패했습니다" });
     }
 
     const user = newUsers[0];
+    console.log("✅ 사용자 생성 완료:", user.id);
     
     // Close database connection
     await sql.end();
+    console.log("🔚 데이터베이스 연결 종료");
     
     // Don't send password back
     const { password, ...userResponse } = user;
+    console.log("🎉 회원가입 성공!");
     return res.status(201).json({ user: userResponse });
   } catch (error: any) {
-    console.error("Registration error:", error);
+    console.error("❌ 회원가입 에러:", error);
+    console.error("에러 상세:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
     if (error.errors) {
+      console.error("검증 에러들:", error.errors);
       return res.status(400).json({ 
         message: "입력 정보를 확인해주세요",
         errors: error.errors 
       });
     }
-    return res.status(500).json({ message: "회원가입 중 오류가 발생했습니다" });
+    return res.status(500).json({ 
+      message: "회원가입 중 오류가 발생했습니다",
+      error: error.message 
+    });
   }
 }
