@@ -1,0 +1,677 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>전공 알래말래 - 창의융합학부 전공 매칭 시스템</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'korean': ['Noto Sans KR', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#1976D2',
+                        secondary: '#388E3C',
+                        accent: '#FF7043',
+                        neutral: {
+                            50: '#FAFAFA',
+                            100: '#F5F5F5',
+                            900: '#212121'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-gentle': 'pulse 2s infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+        }
+        .chat-bubble-bot {
+            background: linear-gradient(135deg, #F5F5F5 0%, #EEEEEE 100%);
+        }
+    </style>
+</head>
+<body class="font-korean bg-neutral-50 text-neutral-900">
+    <!-- @COMPONENT: Header -->
+    <header class="bg-white shadow-sm border-b-2 border-primary/10 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-neutral-900">전공 알래말래</h1>
+                        <p class="text-sm text-neutral-600">창의융합학부 전공 매칭 시스템</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex space-x-6">
+                    <a href="#assessment" class="text-neutral-700 hover:text-primary transition-colors font-medium">성향 진단</a>
+                    <a href="#results" class="text-neutral-700 hover:text-primary transition-colors font-medium">결과 보기</a>
+                    <a href="#chat" class="text-neutral-700 hover:text-primary transition-colors font-medium">상담 챗봇</a>
+                </nav>
+                <button class="md:hidden p-2 rounded-lg hover:bg-neutral-100">
+                    <i class="fas fa-bars text-neutral-700"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <!-- @COMPONENT: HeroSection -->
+    <section class="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 py-16 sm:py-24">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="animate-fade-in">
+                <h2 class="text-4xl sm:text-5xl font-bold text-neutral-900 mb-6">
+                    나에게 맞는 전공을 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">찾아보세요</span>
+                </h2>
+                <p class="text-xl text-neutral-700 mb-8 max-w-2xl mx-auto">
+                    RIASEC 성향 진단을 통해 창의융합학부의 다양한 전공 중 당신에게 가장 적합한 분야를 추천해드립니다.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg" data-event="click:startAssessment">
+                        <i class="fas fa-play mr-2"></i>
+                        진단 시작하기
+                    </button>
+                    <button class="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        RIASEC이란?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- @COMPONENT: AssessmentSection -->
+    <section id="assessment" class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-neutral-900 mb-4">RIASEC 성향 진단</h3>
+                <p class="text-lg text-neutral-600">간단한 질문들을 통해 당신의 성향을 파악해보세요</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-neutral-700">진행률</span>
+                    <span class="text-sm font-medium text-primary" data-bind="progress.current">3</span>/
+                    <span class="text-sm text-neutral-500" data-bind="progress.total">15</span>
+                </div>
+                <div class="w-full bg-neutral-200 rounded-full h-2">
+                    <div class="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300" style="width: 20%" data-bind="progress.percentage"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-neutral-50 rounded-2xl p-8 shadow-sm border border-neutral-200 mb-8 animate-slide-up">
+                <div class="mb-6">
+                    <span class="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium mb-4">
+                        질문 <span data-bind="question.current">3</span>
+                    </span>
+                    <h4 class="text-xl font-semibold text-neutral-900 mb-3" data-bind="question.text">
+                        기계나 도구를 다루는 작업에 흥미를 느끼시나요?
+                    </h4>
+                    <p class="text-neutral-600" data-mock="true">
+                        자신의 성향과 가장 가까운 답변을 선택해주세요.
+                    </p>
+                </div>
+
+                <!-- Answer Options -->
+                <div class="space-y-3">
+                    <!-- @MAP: answerOptions.map(option => ( -->
+                    <label class="flex items-center p-4 bg-white rounded-xl border border-neutral-200 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                        <input type="radio" name="answer" value="strongly_agree" class="w-5 h-5 text-primary">
+                        <span class="ml-4 text-neutral-800 font-medium" data-bind="option.text">매우 그렇다</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-white rounded-xl border border-neutral-200 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                        <input type="radio" name="answer" value="agree" class="w-5 h-5 text-primary">
+                        <span class="ml-4 text-neutral-800 font-medium">그렇다</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-white rounded-xl border border-neutral-200 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                        <input type="radio" name="answer" value="neutral" class="w-5 h-5 text-primary">
+                        <span class="ml-4 text-neutral-800 font-medium">보통이다</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-white rounded-xl border border-neutral-200 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                        <input type="radio" name="answer" value="disagree" class="w-5 h-5 text-primary">
+                        <span class="ml-4 text-neutral-800 font-medium">그렇지 않다</span>
+                    </label>
+                    <label class="flex items-center p-4 bg-white rounded-xl border border-neutral-200 hover:border-primary/50 hover:bg-primary/5 transition-all cursor-pointer">
+                        <input type="radio" name="answer" value="strongly_disagree" class="w-5 h-5 text-primary">
+                        <span class="ml-4 text-neutral-800 font-medium">전혀 그렇지 않다</span>
+                    </label>
+                    <!-- @END_MAP )) -->
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8">
+                    <button class="flex items-center px-6 py-3 text-neutral-600 hover:text-neutral-800 transition-colors" data-event="click:previousQuestion">
+                        <i class="fas fa-chevron-left mr-2"></i>
+                        이전
+                    </button>
+                    <button class="flex items-center px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-semibold transition-all" data-event="click:nextQuestion">
+                        다음
+                        <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIASEC Types Info -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- @MAP: riasecTypes.map(type => ( -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-wrench text-white text-lg" data-bind="type.icon"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-neutral-900" data-bind="type.name">실용적 (R)</h5>
+                            <p class="text-sm text-neutral-600" data-bind="type.nameEn">Realistic</p>
+                        </div>
+                    </div>
+                    <p class="text-neutral-700 text-sm" data-bind="type.description">
+                        기계, 도구, 실물을 다루는 것을 선호하며 실용적이고 현실적인 성향
+                    </p>
+                </div>
+                <!-- @END_MAP )) -->
+                
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-secondary to-primary rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-microscope text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-neutral-900">탐구적 (I)</h5>
+                            <p class="text-sm text-neutral-600">Investigative</p>
+                        </div>
+                    </div>
+                    <p class="text-neutral-700 text-sm">
+                        관찰하고 분석하며 문제를 해결하는 것을 좋아하는 연구지향적 성향
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-neutral-200 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-accent to-primary rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-palette text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold text-neutral-900">예술적 (A)</h5>
+                            <p class="text-sm text-neutral-600">Artistic</p>
+                        </div>
+                    </div>
+                    <p class="text-neutral-700 text-sm">
+                        창조적이고 독창적인 것을 추구하며 예술적 표현을 좋아하는 성향
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: AssessmentSection -->
+
+    <!-- @COMPONENT: ResultsSection -->
+    <section id="results" class="py-16 bg-neutral-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-neutral-900 mb-4">진단 결과</h3>
+                <p class="text-lg text-neutral-600">당신의 RIASEC 성향 분석 결과입니다</p>
+            </div>
+
+            <!-- Results Overview -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm border border-neutral-200 mb-8">
+                <div class="text-center mb-8">
+                    <h4 class="text-2xl font-bold text-neutral-900 mb-2">
+                        <span data-bind="user.name" data-mock="true">김학생</span>님의 주요 성향
+                    </h4>
+                    <div class="flex justify-center items-center space-x-4">
+                        <span class="inline-block bg-primary text-white px-4 py-2 rounded-full font-semibold text-lg" data-bind="result.primaryType">
+                            탐구적 (I)
+                        </span>
+                        <span class="text-neutral-400">+</span>
+                        <span class="inline-block bg-secondary text-white px-4 py-2 rounded-full font-semibold text-lg" data-bind="result.secondaryType">
+                            예술적 (A)
+                        </span>
+                    </div>
+                </div>
+
+                <!-- RIASEC Chart -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h5 class="text-lg font-semibold text-neutral-900 mb-4">성향별 점수</h5>
+                        <div class="space-y-4">
+                            <!-- @MAP: riasecScores.map(score => ( -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-3" data-bind="score.color">
+                                        <span class="text-white text-sm font-semibold" data-bind="score.letter">I</span>
+                                    </div>
+                                    <span class="font-medium text-neutral-800" data-bind="score.name">탐구적</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-32 bg-neutral-200 rounded-full h-2">
+                                        <div class="bg-primary h-2 rounded-full" style="width: 85%" data-bind="score.percentage"></div>
+                                    </div>
+                                    <span class="text-sm font-semibold text-neutral-700" data-bind="score.value">85%</span>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                            
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center mr-3">
+                                        <span class="text-white text-sm font-semibold">A</span>
+                                    </div>
+                                    <span class="font-medium text-neutral-800">예술적</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-32 bg-neutral-200 rounded-full h-2">
+                                        <div class="bg-secondary h-2 rounded-full" style="width: 72%"></div>
+                                    </div>
+                                    <span class="text-sm font-semibold text-neutral-700">72%</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-neutral-400 rounded-lg flex items-center justify-center mr-3">
+                                        <span class="text-white text-sm font-semibold">S</span>
+                                    </div>
+                                    <span class="font-medium text-neutral-800">사회적</span>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-32 bg-neutral-200 rounded-full h-2">
+                                        <div class="bg-neutral-400 h-2 rounded-full" style="width: 58%"></div>
+                                    </div>
+                                    <span class="text-sm font-semibold text-neutral-700">58%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="text-lg font-semibold text-neutral-900 mb-4">추천 전공</h5>
+                        <div class="space-y-3">
+                            <!-- @MAP: recommendedMajors.map(major => ( -->
+                            <div class="bg-neutral-50 rounded-xl p-4 border border-neutral-200">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h6 class="font-semibold text-neutral-900" data-bind="major.name">컴퓨터공학과</h6>
+                                    <span class="bg-primary text-white px-3 py-1 rounded-full text-sm font-medium" data-bind="major.matchRate">92%</span>
+                                </div>
+                                <p class="text-sm text-neutral-600" data-bind="major.description">
+                                    논리적 사고와 창의적 문제해결 능력을 활용한 소프트웨어 개발 분야
+                                </p>
+                            </div>
+                            <!-- @END_MAP )) -->
+                            
+                            <div class="bg-neutral-50 rounded-xl p-4 border border-neutral-200">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h6 class="font-semibold text-neutral-900">디지털미디어학과</h6>
+                                    <span class="bg-secondary text-white px-3 py-1 rounded-full text-sm font-medium">87%</span>
+                                </div>
+                                <p class="text-sm text-neutral-600">
+                                    기술과 예술을 융합한 창의적 콘텐츠 제작 분야
+                                </p>
+                            </div>
+
+                            <div class="bg-neutral-50 rounded-xl p-4 border border-neutral-200">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h6 class="font-semibold text-neutral-900">정보통계학과</h6>
+                                    <span class="bg-accent text-white px-3 py-1 rounded-full text-sm font-medium">81%</span>
+                                </div>
+                                <p class="text-sm text-neutral-600">
+                                    데이터 분석과 통계적 추론을 통한 인사이트 도출 분야
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Explanation -->
+                <div class="mt-8 p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <h5 class="text-lg font-semibold text-neutral-900 mb-3">
+                        <i class="fas fa-lightbulb text-accent mr-2"></i>
+                        왜 이 전공들이 적합한가요?
+                    </h5>
+                    <p class="text-neutral-700 leading-relaxed" data-bind="explanation.text" data-mock="true">
+                        탐구적 성향이 강한 당신은 복잡한 문제를 논리적으로 분석하고 해결하는 것을 즐깁니다. 
+                        컴퓨터공학과는 알고리즘 설계와 시스템 구현을 통해 이러한 성향을 충분히 발휘할 수 있습니다. 
+                        또한 예술적 성향도 높아 디지털미디어학과처럼 기술과 창의성을 결합한 분야에서도 
+                        뛰어난 성과를 낼 수 있을 것입니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all transform hover:scale-105 shadow-lg" data-event="click:openChat">
+                    <i class="fas fa-comments mr-2"></i>
+                    전공 상담 받기
+                </button>
+                <button class="border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all" data-event="click:retakeAssessment">
+                    <i class="fas fa-redo mr-2"></i>
+                    다시 진단하기
+                </button>
+                <button class="border-2 border-secondary text-secondary hover:bg-secondary hover:text-white px-8 py-4 rounded-xl font-semibold text-lg transition-all" data-event="click:downloadResults">
+                    <i class="fas fa-download mr-2"></i>
+                    결과 저장하기
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ResultsSection -->
+
+    <!-- @COMPONENT: ChatSection -->
+    <section id="chat" class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-neutral-900 mb-4">AI 전공 상담 챗봇</h3>
+                <p class="text-lg text-neutral-600">궁금한 점이 있으시면 언제든지 물어보세요</p>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="bg-neutral-50 rounded-2xl shadow-sm border border-neutral-200 overflow-hidden">
+                <!-- Chat Header -->
+                <div class="bg-gradient-to-r from-primary to-secondary p-4">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
+                            <i class="fas fa-robot text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-white">전공 상담 AI</h4>
+                            <p class="text-white/80 text-sm">
+                                <span class="inline-block w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse-gentle"></span>
+                                온라인
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Messages -->
+                <div class="h-96 overflow-y-auto p-4 space-y-4" data-implementation="Implement chat scroll behavior">
+                    <!-- Bot Message -->
+                    <div class="flex items-start space-x-3 animate-slide-up">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div class="chat-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-2xl border border-neutral-200">
+                            <p class="text-neutral-800" data-mock="true">
+                                안녕하세요! 전공 상담 AI입니다. 😊<br>
+                                RIASEC 진단 결과를 바탕으로 전공에 대한 궁금한 점들을 답변해드릴게요. 
+                                어떤 것이 궁금하신가요?
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- User Message -->
+                    <div class="flex items-start space-x-3 justify-end animate-slide-up">
+                        <div class="chat-bubble-user max-w-xs lg:max-w-md px-4 py-3 rounded-2xl">
+                            <p class="text-white" data-mock="true">
+                                컴퓨터공학과와 디지털미디어학과의 차이점이 궁금해요
+                            </p>
+                        </div>
+                        <div class="w-8 h-8 bg-gradient-to-br from-accent to-primary rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                    </div>
+
+                    <!-- Bot Response -->
+                    <div class="flex items-start space-x-3 animate-slide-up">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div class="chat-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-2xl border border-neutral-200">
+                            <p class="text-neutral-800" data-mock="true">
+                                좋은 질문이에요! 두 전공의 주요 차이점을 설명해드릴게요:<br><br>
+                                
+                                <strong>컴퓨터공학과</strong> 🖥️<br>
+                                • 프로그래밍, 알고리즘, 시스템 설계 중심<br>
+                                • 논리적 사고와 문제해결 능력 중요<br>
+                                • 소프트웨어 개발, AI, 데이터 분야 진로<br><br>
+                                
+                                <strong>디지털미디어학과</strong> 🎨<br>
+                                • 기술 + 예술 융합<br>
+                                • 창의적 콘텐츠 제작<br>
+                                • 게임, 영상, 웹 디자인 분야 진로<br><br>
+                                
+                                당신의 탐구적(I) + 예술적(A) 성향으로는 두 분야 모두 적합하답니다!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Typing Indicator (Hidden by default) -->
+                    <div class="flex items-start space-x-3 hidden" id="typing-indicator">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                        <div class="chat-bubble-bot px-4 py-3 rounded-2xl border border-neutral-200">
+                            <div class="flex space-x-1">
+                                <div class="w-2 h-2 bg-neutral-400 rounded-full animate-bounce"></div>
+                                <div class="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                                <div class="w-2 h-2 bg-neutral-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="p-4 border-t border-neutral-200 bg-white">
+                    <div class="flex space-x-3">
+                        <input 
+                            type="text" 
+                            placeholder="궁금한 것을 물어보세요..." 
+                            class="flex-1 px-4 py-3 border border-neutral-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                            data-event="keypress:handleEnter"
+                            data-mock="true"
+                        >
+                        <button class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-semibold transition-all" data-event="click:sendMessage">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Quick Questions -->
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button class="text-sm bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-3 py-2 rounded-full transition-colors" data-event="click:quickQuestion" data-mock="true">
+                            📚 전공별 커리큘럼이 궁금해요
+                        </button>
+                        <button class="text-sm bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-3 py-2 rounded-full transition-colors" data-event="click:quickQuestion" data-mock="true">
+                            💼 졸업 후 진로는 어떻게 되나요?
+                        </button>
+                        <button class="text-sm bg-neutral-100 hover:bg-neutral-200 text-neutral-700 px-3 py-2 rounded-full transition-colors" data-event="click:quickQuestion" data-mock="true">
+                            🎯 전공 선택 기준이 있나요?
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Features -->
+            <div class="grid md:grid-cols-3 gap-6 mt-8">
+                <div class="text-center p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-primary text-xl"></i>
+                    </div>
+                    <h5 class="font-semibold text-neutral-900 mb-2">개인화된 상담</h5>
+                    <p class="text-sm text-neutral-600">당신의 RIASEC 결과를 바탕으로 맞춤형 조언을 제공합니다</p>
+                </div>
+                
+                <div class="text-center p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <div class="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-clock text-secondary text-xl"></i>
+                    </div>
+                    <h5 class="font-semibold text-neutral-900 mb-2">24시간 이용</h5>
+                    <p class="text-sm text-neutral-600">언제든지 궁금한 점을 물어보고 답변을 받을 수 있습니다</p>
+                </div>
+                
+                <div class="text-center p-6 bg-neutral-50 rounded-xl border border-neutral-200">
+                    <div class="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-graduation-cap text-accent text-xl"></i>
+                    </div>
+                    <h5 class="font-semibold text-neutral-900 mb-2">전문적 정보</h5>
+                    <p class="text-sm text-neutral-600">창의융합학부 전공에 대한 정확하고 상세한 정보를 제공합니다</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ChatSection -->
+
+    <!-- @COMPONENT: Footer -->
+    <footer class="bg-neutral-900 text-white py-12">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-graduation-cap text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">전공 알래말래</h4>
+                            <p class="text-neutral-400 text-sm">창의융합학부 전공 매칭 시스템</p>
+                        </div>
+                    </div>
+                    <p class="text-neutral-400 mb-4">
+                        RIASEC 성향 진단을 통해 학생들이 자신에게 맞는 전공을 찾을 수 있도록 도와주는 
+                        AI 기반 전공 추천 시스템입니다.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-neutral-400 hover:text-white transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-400 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="#" class="text-neutral-400 hover:text-white transition-colors">
+                            <i class="fas fa-envelope text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="font-semibold mb-4">서비스</h5>
+                    <ul class="space-y-2 text-neutral-400">
+                        <li><a href="#assessment" class="hover:text-white transition-colors">RIASEC 진단</a></li>
+                        <li><a href="#results" class="hover:text-white transition-colors">결과 분석</a></li>
+                        <li><a href="#chat" class="hover:text-white transition-colors">AI 상담</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">전공 정보</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h5 class="font-semibold mb-4">지원</h5>
+                    <ul class="space-y-2 text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition-colors">도움말</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">문의하기</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">개인정보처리방침</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">이용약관</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-neutral-800 mt-8 pt-8 text-center text-neutral-400">
+                <p>&copy; 2024 전공 알래말래. CNU AI 챌린지 참가작품. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <!-- Floating Chat Button (Mobile) -->
+    <button class="fixed bottom-6 right-6 w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-full shadow-lg flex items-center justify-center text-white text-xl hover:scale-110 transition-all z-40 md:hidden" data-event="click:openMobileChat">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <script>
+        // TODO: Implement business logic, API calls, or state management
+        
+        (function() {
+            // Simple interaction handlers for demo purposes
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+
+            // Demo progress simulation
+            let currentProgress = 20;
+            const progressBar = document.querySelector('[data-bind="progress.percentage"]');
+            
+            // Demo animation for progress updates
+            function updateProgress() {
+                if (progressBar && currentProgress < 100) {
+                    currentProgress += 20;
+                    progressBar.style.width = currentProgress + '%';
+                }
+            }
+
+            // Demo chat scroll to bottom
+            const chatContainer = document.querySelector('.h-96.overflow-y-auto');
+            if (chatContainer) {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            // Add demo event listeners
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('[data-event*="click"]')) {
+                    e.preventDefault();
+                    
+                    // Extract event type from data-event attribute
+                    const eventType = e.target.getAttribute('data-event');
+                    
+                    if (eventType.includes('nextQuestion')) {
+                        updateProgress();
+                        console.log('Next question triggered');
+                    } else if (eventType.includes('startAssessment')) {
+                        document.querySelector('#assessment')?.scrollIntoView({ behavior: 'smooth' });
+                    } else if (eventType.includes('openChat') || eventType.includes('openMobileChat')) {
+                        document.querySelector('#chat')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+
+            // Demo typing indicator
+            function showTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) {
+                    indicator.classList.remove('hidden');
+                    setTimeout(() => {
+                        indicator.classList.add('hidden');
+                    }, 2000);
+                }
+            }
+
+            // Handle enter key in chat input
+            document.addEventListener('keypress', function(e) {
+                if (e.target.matches('input[data-event*="keypress"]') && e.key === 'Enter') {
+                    showTypingIndicator();
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>
