@@ -38,10 +38,10 @@ if (process.env.NODE_ENV === 'production') {
     'postgresql://postgres.umblyjvtzjsokvjyhzyb:Yf7OOTKTbTzMnTQF@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres';
   dbLog("Using Supabase Transaction Pooler for production", "info");
 } else {
-  // Use direct connection for development
+  // Use transaction pooler for development as well
   connectionString = process.env.DATABASE_URL || 
-    'postgresql://postgres:Yf7OOTKTbTzMnTQF@db.umblyjvtzjsokvjyhzyb.supabase.co:5432/postgres';
-  dbLog("Using Supabase Direct Connection for development", "info");
+    'postgresql://postgres.umblyjvtzjsokvjyhzyb:Yf7OOTKTbTzMnTQF@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres';
+  dbLog("Using Supabase Transaction Pooler for development", "info");
 }
 
 if (!connectionString.includes('mock')) {
