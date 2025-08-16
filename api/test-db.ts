@@ -1,4 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
@@ -29,16 +31,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     console.log("환경변수 체크:", envCheck);
 
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL 환경변수가 설정되지 않았습니다');
+    }
+
     // 데이터베이스 연결 테스트
-    const { db } = await import('../server/db');
+    const sql = postgres(process.env.DATABASE_URL);
+    const db = drizzle(sql);
     
     // 간단한 쿼리 테스트 (테이블 목록 조회)
-    const result = await db.execute(`
+    const result = await sql`
       SELECT table_name 
       FROM information_schema.tables 
       WHERE table_schema = 'public'
       ORDER BY table_name;
-    `);
+    `;
     
     console.log("✅ 데이터베이스 연결 성공!");
     console.log("테이블 목록:", result);
@@ -47,6 +54,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const userTableExists = result.some((row: any) => 
       row.table_name === 'users'
     );
+
+    // 연결 종료
+    await sql.end();
 
     return res.json({
       success: true,
