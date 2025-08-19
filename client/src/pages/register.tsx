@@ -31,6 +31,9 @@ export default function RegisterPage() {
       return await apiRequest("/api/auth/register", "POST", data);
     },
     onSuccess: (data) => {
+      // Store user data in localStorage for persistence
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
       // Update the auth cache with the user data
       queryClient.setQueryData(["/api/auth/user"], data.user);
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
