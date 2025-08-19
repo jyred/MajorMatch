@@ -1,4 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { db } from '../server/db.js';
+import { users } from '../shared/schema.js';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcryptjs';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
@@ -15,10 +19,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const { db } = await import('../server/db');
-    const { users } = await import('../shared/schema');
-    const { eq } = await import('drizzle-orm');
-    const bcrypt = await import('bcryptjs');
 
     console.log("🌱 시드 데이터 생성 시작...");
     

@@ -1,5 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { ChatMessage } from '../server/types';
+import { storage } from '../server/storage.js';
+import { naturalChatService } from '../server/natural-chat.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
@@ -21,9 +23,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!message) {
       return res.status(400).json({ message: "메시지가 필요합니다." });
     }
-
-    const { storage } = await import('../server/storage');
-    const { naturalChatService } = await import('../server/natural-chat');
     
     const userId = req.headers['x-user-id'] as string;
     if (!userId) {

@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { RIASECScores } from '../server/types';
+import OpenAI from 'openai';
+import { storage } from '../server/storage.js';
+import { pineconeService } from '../server/pinecone.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
@@ -21,11 +24,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (!responses || typeof responses !== 'object') {
       return res.status(400).json({ message: "응답 데이터가 필요합니다." });
     }
-
-    // Import OpenAI dynamically
-    const OpenAI = (await import('openai')).default;
-    const { storage } = await import('../server/storage');
-    const { pineconeService } = await import('../server/pinecone');
     
     const openai = new OpenAI({ 
       apiKey: process.env.OPENAI_API_KEY 
