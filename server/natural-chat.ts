@@ -3,9 +3,20 @@ import type { RIASECScores, ChatMessage } from '@shared/schema';
 import { pineconeService } from './pinecone';
 import { conversationEnhancer } from './conversation-enhancer';
 
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || ''
-});
+// Lazy initialization to ensure environment variables are loaded
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+    openai = new OpenAI({ 
+      apiKey: process.env.OPENAI_API_KEY
+    });
+  }
+  return openai;
+}
 
 export interface ConversationPersona {
   name: string;
@@ -148,7 +159,7 @@ ${profile?.conversationHistory.slice(-5).map(msg => `${msg.role}: ${msg.content}
 }
 `;
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
@@ -301,7 +312,7 @@ ${followUpQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
 `;
 
     try {
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [
           { role: "system", content: systemPrompt },
@@ -351,7 +362,7 @@ ${followUpQuestions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
 }
 `;
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
@@ -407,7 +418,7 @@ ${profile.conversationHistory.slice(-10).map(msg => `${msg.role}: ${msg.content}
 2-3문장으로 간결하게 작성해주세요.
 `;
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
         messages: [{ role: "user", content: prompt }],
         temperature: 0.5

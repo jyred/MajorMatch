@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { db } from '../server/db.js';
-import { users } from '../shared/schema.js';
+import { db } from '../server/db';
+import { users } from '../shared/schema';
 import { eq } from 'drizzle-orm';
 import bcrypt from 'bcryptjs';
 

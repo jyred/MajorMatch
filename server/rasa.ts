@@ -3,9 +3,20 @@ import type { RIASECScores, ChatMessage } from '@shared/schema';
 import { pineconeService } from './pinecone';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || ''
-});
+// Lazy initialization to ensure environment variables are loaded
+let openai: OpenAI | null = null;
+
+function getOpenAIClient(): OpenAI {
+  if (!openai) {
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is not set');
+    }
+    openai = new OpenAI({ 
+      apiKey: process.env.OPENAI_API_KEY
+    });
+  }
+  return openai;
+}
 
 // Rasa-like slot management and conversation flow
 export interface ConversationSlots {
@@ -54,7 +65,7 @@ export class RasaLikeService {
 의도를 하나의 단어로만 답변해주세요.
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.1,
@@ -87,7 +98,7 @@ export class RasaLikeService {
 JSON 형식으로 답변해주세요. 해당하는 엔티티가 없으면 빈 객체를 반환해주세요.
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
@@ -421,7 +432,7 @@ ${info.overview}
 따뜻하고 전문적인 톤으로 3-4문장으로 답변해주세요.
       `;
 
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.7,
@@ -469,7 +480,7 @@ ${contextPrompt}
     `;
 
     try {
-      const response = await openai.chat.completions.create({
+      const response = await getOpenAIClient().chat.completions.create({
         model: "gpt-4o",
         messages: [{ role: "user", content: prompt }],
         temperature: 0.9,

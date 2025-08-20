@@ -39,6 +39,19 @@ const requireAuth = (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // CORS middleware for all routes
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-user-id');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
+    }
+    next();
+  });
+
   // Session middleware setup
   app.use(session({
     secret: process.env.SESSION_SECRET || 'your-secret-key-development',
@@ -549,7 +562,7 @@ RIASEC 점수 (각 항목 100점 만점): ${JSON.stringify(riasecScores)}
   });
 
   // Natural conversational chat
-  app.post("/api/chat", requireAuth, async (req, res) => {
+  app.post("/api/chat", async (req, res) => {
     try {
       const { message, sessionId, riasecScores, recommendedMajors } = req.body;
       
@@ -557,17 +570,27 @@ RIASEC 점수 (각 항목 100점 만점): ${JSON.stringify(riasecScores)}
         return res.status(400).json({ message: "메시지가 필요합니다." });
       }
 
+      // Check for authentication - either session or header-based
+      let userId: string;
+      if (req.session && req.session.userId) {
+        userId = req.session.userId;
+      } else {
+        const headerUserId = req.headers['x-user-id'] as string;
+        if (!headerUserId) {
+          return res.status(401).json({ message: "인증이 필요합니다." });
+        }
+        userId = headerUserId;
+      }
+
       // Get or create chat session
       let session = sessionId ? await storage.getChatSession(sessionId) : null;
       
       if (!session) {
         session = await storage.createChatSession({
-          userId: req.session.userId!,
+          userId,
           messages: []
         });
       }
-
-      const userId = req.session.userId!;
       
       // Update user profile with RIASEC scores if available
       if (riasecScores) {

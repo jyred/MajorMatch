@@ -1,8 +1,13 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { RIASECScores } from '../server/types';
 import OpenAI from 'openai';
-import { storage } from '../server/storage.js';
-import { pineconeService } from '../server/pinecone.js';
+import { storage } from '../server/storage';
+import { pineconeService } from '../server/pinecone';
+
+// Vercel Node.js Runtime 설정
+export const config = {
+  runtime: 'nodejs18.x',
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS

@@ -16,6 +16,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  // 프로덕션 환경에서는 비활성화
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ message: 'This endpoint is not available in production' });
+  }
+
   try {
     console.log("🔍 데이터베이스 연결 테스트 시작...");
     

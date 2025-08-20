@@ -1,7 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { ChatMessage } from '../server/types';
-import { storage } from '../server/storage.js';
-import { naturalChatService } from '../server/natural-chat.js';
+import { storage } from '../server/storage';
+import { naturalChatService } from '../server/natural-chat';
+
+// Vercel Edge Runtime을 사용하지 않고 Node.js Runtime 사용
+export const config = {
+  runtime: 'nodejs18.x',
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS

@@ -1,6 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { storage } from '../server/storage.js';
-import { insertUserSchema } from '../shared/schema.js';
+import { storage } from '../server/storage';
+import { insertUserSchema } from '../shared/schema';
+
+// Vercel Node.js Runtime 설정
+export const config = {
+  runtime: 'nodejs18.x',
+};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS

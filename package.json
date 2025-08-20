@@ -9,7 +9,7 @@
     "build": "vite build",
     "build:server": "esbuild server/api/*.ts --platform=node --packages=external --bundle --format=esm --outdir=dist/api",
     "start": "NODE_ENV=production node dist/index.js",
-    "vercel-build": "npm run build",
+    "vercel-build": "vite build",
     "check": "tsc",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
